@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hdx-portal-mlops-backend
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: hdx-portal-mlops-backend
+  template:
+    metadata:
+      labels:
+        app: hdx-portal-mlops-backend
+    spec:
+      hostNetwork: false
+      volumes:
+        - name: project-pv
+          persistentVolumeClaim:
+            claimName: project-pvc
+        - hostPath:
+            path: /var/run/docker.sock
+          name: dockersock
+        - name: docker-config
+          secret:
+            defaultMode: 420
+            items:
+            - key: .dockerconfigjson
+              path: config.json
+            secretName: nexuscred
+        - name: dockerfiles
+          persistentVolumeClaim:
+            claimName: docker-pvc
+        - hostPath:
+            path: /usr/share/zoneinfo/Asia/Seoul
+            type: ""
+          name: tz-config
+      containers:
+      - name: matilda-backend
+        image: {{.Values.repositoryhost}}/{{.Values.imagename}}:{{.Values.imagetag}}
+        command: ["gunicorn"]
+        args: ["mlopsapi.wsgi:application", "--timeout", "600", "--bind", "0.0.0.0:8000", "--env", "DJANGO_SETTINGS_MODULE={{.Values.settingsModule}}", "-w", "3", "--reload"]
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KUBECONFIG
+          value: {{.Values.kubeconfigpath}}
+          #value: "/kube/kube-config"
+        resources:
+          limits:
+            cpu: "3"
+            memory: "2000Mi"
+          requests:
+            cpu: 10m
+            memory: "200Mi"
+        volumeMounts:
+          - mountPath: "/home/mlops/project"
+            name: project-pv
+            subPath: public
+          - mountPath: /var/run/docker.sock
+            name: dockersock
+          - mountPath: /home/mlops/.docker/
+            name: docker-config
+          # User Storage Volume Add
+          - mountPath: "/home/mlops/user"
+            name: project-pv
+            subPath: public/user
+          - mountPath: /home/mlops/dockerfiles
+            name: dockerfiles
+          - mountPath: /etc/localtime
+            name: tz-config
+            readOnly: true
+        ports:
+        - containerPort: 8000
+      imagePullSecrets:
+      - name: nexuscred

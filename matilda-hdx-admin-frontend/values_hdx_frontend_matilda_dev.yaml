@@ -1,0 +1,5 @@
+replicaCount: 3
+repositoryhost: "nexus.mlops.matilda-mzc.com"
+imagename: "docker-local/matilda-frontend"
+imagetag: "1add27"
+ServiceType: "NodePort"

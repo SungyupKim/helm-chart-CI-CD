@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hdx-portal-frontend
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: hdx-portal-frontend
+  template:
+    metadata:
+      labels:
+        app: hdx-portal-frontend
+    spec:
+      hostNetwork: false
+      containers:
+      - name: matilda-asset-frontend
+        imagePullPolicy: Always
+        #image: 3.37.191.158:30002/docker-local/matilda-backend:{{.Values.imagetag}}
+        image: {{.Values.repositoryhost}}/{{.Values.imagename}}:{{.Values.imagetag}}
+        env:
+        - name: KUBECONFIG
+          value: "/kube/kube-config"
+        resources:
+          limits: {}
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: nexuscred

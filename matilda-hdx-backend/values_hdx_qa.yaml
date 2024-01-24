@@ -1,0 +1,10 @@
+# Default values for matilda-backend.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 5
+imagetag: "e70647fd"
+imagename: "docker-local/matilda-backend"
+settingsModule: "mlopsapi.settings.qa-hdx"
+kubeconfigpath: "/kube/kube-config-hdx-qa"
+repositoryhost: "qa-nexus.hdx.matilda-mzc.com"
+pvname: "project-pv"

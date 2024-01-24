@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hdx-portal-asset-backend
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: hdx-portal-asset-backend
+  template:
+    metadata:
+      labels:
+        app: hdx-portal-asset-backend
+    spec:
+      hostNetwork: false
+      volumes:
+        - name: dvc-volume
+          persistentVolumeClaim:
+            claimName: asset-dvc
+        - name: asset-local
+          persistentVolumeClaim:
+            claimName: asset-local  
+      containers:
+      - name: matilda-asset-backend
+        image: {{.Values.repositoryhost}}/{{.Values.imagename}}:{{.Values.imagetag}}
+        command: ["/bin/sh", "-c"]
+        #env:
+        #- name: DJANGO_SETTINGS_MODULE
+        #  value: {{.Values.settingsModule}}
+        args: ["gunicorn --enable-stdio-inheritance --preload --bind 0.0.0.0:8000 config.wsgi:application --log-level debug -w 8 --timeout 600 --threads 2 --env DJANGO_SETTINGS_MODULE={{.Values.settingsModule}} --daemon;DJANGO_SETTINGS_MODULE={{.Values.settingsModule}} celery -A config worker -c 4 --beat --scheduler redbeat.RedBeatScheduler -l info"]
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: "1"
+            memory: "2000Mi"
+          requests:
+            cpu: 10m
+            memory: "200Mi"
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+          - mountPath: "/data/dvc"
+            name: dvc-volume
+          - mountPath: "/data/backend"
+            name: asset-local
+      imagePullSecrets:
+      - name: nexuscred

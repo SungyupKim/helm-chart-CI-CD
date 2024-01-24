@@ -1,0 +1,5 @@
+replicaCount: 3
+repositoryhost: "qa-nexus.hdx.matilda-mzc.com"
+imagename: "docker-local/matilda-frontend"
+imagetag: "b24d6d"
+ServiceType: "NodePort"

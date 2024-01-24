@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: matilda-backend
+  name: matilda-backend-cp
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: matilda-backend
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

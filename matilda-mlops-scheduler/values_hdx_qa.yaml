@@ -1,0 +1,7 @@
+replicaCount: 1
+imagetag: "f13c12b"
+imagename: "docker-local/matilda-background-task"
+settingsModule: "schedulers.settings.qa-hdx"
+kubeconfigpath: "/kube/kube-config-hdx-qa"
+repositoryhost: "qa-nexus.hdx.matilda-mzc.com"
+secretName: "nexuscred"

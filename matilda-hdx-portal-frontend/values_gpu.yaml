@@ -1,0 +1,8 @@
+# Default values for matilda-backend.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+repositoryhost: "15.164.12.54:5000"
+imagename: "docker-local/matilda-asset-frontend"
+imagetag: "3f1266"
+ServiceType: "NodePort"

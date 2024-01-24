@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hdx-portal-admin-frontend
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: hdx-portal-admin-frontend
+  template:
+    metadata:
+      labels:
+        app: hdx-portal-admin-frontend
+    spec:
+      hostNetwork: false
+      containers:
+      - name: matilda-frontend
+        imagePullPolicy: Always
+        #image: 3.37.191.158:30002/docker-local/matilda-backend:{{.Values.imagetag}}
+        image: {{.Values.repositoryhost}}/{{.Values.imagename}}:{{.Values.imagetag}}
+        resources:
+          limits: {}
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: nexuscred

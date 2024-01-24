@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-exporter
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: user-exporter
+  template:
+    metadata:
+      labels:
+        app: user-exporter
+    spec:
+      containers:
+      - env:
+        - name: DATABASE_HOST
+          value: {{.Values.db_host}}
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: DATABASE_USER
+          value: {{.Values.db_user}}
+        - name: DATABASE_PASSWORD
+          value: {{.Values.db_password}}
+        - name: DATABASE_NAME
+          value: {{.Values.db_name}}
+        image: {{.Values.repositoryhost}}/{{.Values.imagename}}:{{.Values.imagetag}}
+        imagePullPolicy: Always
+        name: user-exporter
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "3"
+            memory: 4Gi
+          requests:
+            cpu: 100m
+            memory: 250Mi
+        volumeMounts:
+        - mountPath: /user
+          name: user-storage-pvc
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: regcred
+      volumes:
+      - name: user-storage-pvc
+        persistentVolumeClaim:
+          claimName: user-storage-pvc

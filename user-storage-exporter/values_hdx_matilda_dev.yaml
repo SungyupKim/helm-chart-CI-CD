@@ -1,0 +1,12 @@
+# Default values for user-storage-exporter.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+imagetag: "ls1"
+imagename: "user_exporter"
+repositoryhost: "nexus.mlops.matilda-mzc.com"
+db_host: "postgres-nodeport.mlops-dev.svc.cluster.local"
+# db_port: "5432"
+db_user: "postgres"
+db_password: "megazone00!"
+db_name: "postgres"
